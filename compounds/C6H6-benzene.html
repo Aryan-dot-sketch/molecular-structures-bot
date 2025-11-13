@@ -409,13 +409,14 @@
                 benzene.add(hydrogen);
                 atoms.push(hydrogen);
 
-                // Create bonds
-                if (showBonds) {
+                // Create bonds (only create each C-C bond once)
+                if (showBonds && i < 6) {
                     // C-C bond
                     const nextAngle = ((i + 1) % 6) * angleStep;
                     const nextX = Math.cos(nextAngle) * radius;
                     const nextY = Math.sin(nextAngle) * radius;
                     
+                    // Alternate single and double bonds (0,2,4 are double bonds)
                     const bond = createBond(x, y, 0, nextX, nextY, 0, i % 2 === 0);
                     benzene.add(bond);
                     bonds.push(bond);
