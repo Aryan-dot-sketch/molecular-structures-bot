@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Water Molecule</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #7e22ce 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        #controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.97);
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            max-width: 300px;
+            transition: all 0.3s ease;
+            max-height: 95vh;
+            overflow-y: auto;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        #controls::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #controls::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #8b5cf6);
+            border-radius: 4px;
+        }
+
+        #controls:hover {
+            box-shadow: 0 15px 60px rgba(0, 0, 0, 0.5);
+            transform: translateY(-2px);
+        }
+
+        h1 {
+            font-size: 20px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .control-group {
+            margin-bottom: 14px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 6px;
+            background: linear-gradient(to right, #3b82f6, #8b5cf6);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.7);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.5);
+            border: none;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background: #cbd5e1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 18px;
+            height: 18px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            min-width: 40px;
+            font-size: 12px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 8px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.6);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            background: white;
+            color: #1e293b;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        select:hover {
+            border-color: #8b5cf6;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        #info {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.97);
+            padding: 18px;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(15px);
+            max-width: 280px;
+            color: #1e293b;
+            font-size: 13px;
+            line-height: 1.6;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+        }
+
+        #info h2 {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        #info p {
+            margin-bottom: 8px;
+        }
+
+        #info strong {
+            color: #3b82f6;
+        }
+
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .color-btn {
+            width: 100%;
+            height: 32px;
+            border-radius: 6px;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .color-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: inherit;
+            transition: transform 0.2s ease;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.15);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-btn.active {
+            border-color: #1e293b;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.8);
+            transform: scale(1.1);
+        }
+
+        .section-title {
+            font-size: 12px;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 15px 0 8px 0;
+            font-weight: 700;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 4px;
+        }
+
+        .angle-display {
+            background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 8px;
+            text-align: center;
+            border: 1px solid #e0e7ff;
+        }
+
+        .angle-value {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .angle-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-top: 4px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="controls">
+        <h1>💧 H₂O Control Panel</h1>
+        
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Auto Rotate</label>
+                <div class="toggle-switch active" id="autoRotateToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Rotation Speed <span class="value-display" id="speedValue">1.0x</span></label>
+            <input type="range" id="rotationSpeed" min="0" max="4" step="0.1" value="1">
+        </div>
+
+        <div class="control-group">
+            <label>Zoom <span class="value-display" id="zoomValue">8.0</span></label>
+            <input type="range" id="zoomLevel" min="4" max="20" step="0.5" value="8">
+        </div>
+
+        <div class="section-title">Visual Options</div>
+
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Labels</label>
+                <div class="toggle-switch active" id="labelsToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Bonds</label>
+                <div class="toggle-switch active" id="bondsToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Lone Pairs</label>
+                <div class="toggle-switch active" id="lonePairsToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Bond Angles</label>
+                <div class="toggle-switch" id="anglesToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Rendering Style</label>
+            <select id="styleSelect">
+                <option value="ball-stick">Ball & Stick</option>
+                <option value="space-filling">Space Filling</option>
+                <option value="wireframe">Wireframe</option>
+                <option value="realistic">Realistic</option>
+            </select>
+        </div>
+
+        <div class="section-title">Molecular Geometry</div>
+
+        <div class="angle-display">
+            <div class="angle-value" id="bondAngleValue">104.5°</div>
+            <div class="angle-label">H-O-H Bond Angle</div>
+        </div>
+
+        <div class="control-group">
+            <label>Bond Angle <span class="value-display" id="angleValue">104.5°</span></label>
+            <input type="range" id="bondAngle" min="90" max="120" step="0.5" value="104.5">
+        </div>
+
+        <div class="control-group">
+            <label>Bond Length <span class="value-display" id="lengthValue">1.5</span></label>
+            <input type="range" id="bondLength" min="1" max="2.5" step="0.1" value="1.5">
+        </div>
+
+        <div class="section-title">Color Customization</div>
+
+        <div class="control-group">
+            <label>Oxygen Color</label>
+            <div class="color-grid">
+                <button class="color-btn active" style="background: #ff0000;" data-target="oxygen" data-color="#ff0000"></button>
+                <button class="color-btn" style="background: #ff4444;" data-target="oxygen" data-color="#ff4444"></button>
+                <button class="color-btn" style="background: #0ea5e9;" data-target="oxygen" data-color="#0ea5e9"></button>
+                <button class="color-btn" style="background: #06b6d4;" data-target="oxygen" data-color="#06b6d4"></button>
+                <button class="color-btn" style="background: #8b5cf6;" data-target="oxygen" data-color="#8b5cf6"></button>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Hydrogen Color</label>
+            <div class="color-grid">
+                <button class="color-btn active" style="background: #eeeeee;" data-target="hydrogen" data-color="#eeeeee"></button>
+                <button class="color-btn" style="background: #ffffff;" data-target="hydrogen" data-color="#ffffff"></button>
+                <button class="color-btn" style="background: #fbbf24;" data-target="hydrogen" data-color="#fbbf24"></button>
+                <button class="color-btn" style="background: #60a5fa;" data-target="hydrogen" data-color="#60a5fa"></button>
+                <button class="color-btn" style="background: #a78bfa;" data-target="hydrogen" data-color="#a78bfa"></button>
+            </div>
+        </div>
+
+        <button id="resetBtn">🔄 Reset All</button>
+        <button id="animateBtn">✨ Vibration Mode</button>
+    </div>
+
+    <div id="info">
+        <h2>Water Molecule (H₂O)</h2>
+        <p><strong>Formula:</strong> H₂O</p>
+        <p><strong>Structure:</strong> Bent/Angular</p>
+        <p><strong>Bond Angle:</strong> 104.5° (natural)</p>
+        <p><strong>Bonds:</strong> 2 O-H covalent bonds</p>
+        <p><strong>Lone Pairs:</strong> 2 electron pairs on oxygen</p>
+        <p><strong>Polarity:</strong> Highly polar molecule</p>
+        <p><strong>Hybridization:</strong> sp³</p>
+        <p><strong>Controls:</strong> 🖱️ Drag to rotate | 🔍 Scroll to zoom</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, molecule;
+        let autoRotate = true;
+        let rotationSpeed = 1;
+        let showLabels = true;
+        let showBonds = true;
+        let showLonePairs = true;
+        let showAngles = false;
+        let currentStyle = 'ball-stick';
+        let oxygenColor = '#ff0000';
+        let hydrogenColor = '#eeeeee';
+        let bondAngle = 104.5;
+        let bondLength = 1.5;
+        let labels = [];
+        let atoms = [];
+        let bonds = [];
+        let lonePairs = [];
+        let angleIndicators = [];
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let manualRotation = { x: 0, y: 0 };
+        let vibrationMode = false;
+        let vibrationPhase = 0;
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000814);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 8;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(0xffffff, 1.0);
+            pointLight1.position.set(10, 10, 10);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0x4299e1, 0.6);
+            pointLight2.position.set(-10, -10, -10);
+            scene.add(pointLight2);
+
+            const pointLight3 = new THREE.PointLight(0xffffff, 0.5);
+            pointLight3.position.set(0, 10, -10);
+            scene.add(pointLight3);
+
+            createMolecule();
+            setupControls();
+            setupMouseControls();
+            animate();
+        }
+
+        function createMolecule() {
+            molecule = new THREE.Group();
+
+            // Central oxygen atom
+            const oPos = { x: 0, y: 0, z: 0 };
+            const oxygenSize = currentStyle === 'space-filling' ? 1.4 : (currentStyle === 'realistic' ? 0.8 : 0.6);
+            const oxygen = createAtom(oxygenColor, oxygenSize, currentStyle === 'realistic');
+            oxygen.position.set(oPos.x, oPos.y, oPos.z);
+            oxygen.userData = { type: 'oxygen', label: 'O' };
+            molecule.add(oxygen);
+            atoms.push(oxygen);
+
+            // Calculate hydrogen positions based on bond angle
+            const angleRad = (bondAngle * Math.PI) / 180;
+            const halfAngle = angleRad / 2;
+
+            // Hydrogen 1 (left)
+            const h1Pos = {
+                x: -bondLength * Math.sin(halfAngle),
+                y: -bondLength * Math.cos(halfAngle),
+                z: 0
+            };
+            const hydrogenSize = currentStyle === 'space-filling' ? 1.0 : (currentStyle === 'realistic' ? 0.5 : 0.4);
+            const h1 = createAtom(hydrogenColor, hydrogenSize, currentStyle === 'realistic');
+            h1.position.set(h1Pos.x, h1Pos.y, h1Pos.z);
+            h1.userData = { type: 'hydrogen', label: 'H' };
+            molecule.add(h1);
+            atoms.push(h1);
+
+            // Hydrogen 2 (right)
+            const h2Pos = {
+                x: bondLength * Math.sin(halfAngle),
+                y: -bondLength * Math.cos(halfAngle),
+                z: 0
+            };
+            const h2 = createAtom(hydrogenColor, hydrogenSize, currentStyle === 'realistic');
+            h2.position.set(h2Pos.x, h2Pos.y, h2Pos.z);
+            h2.userData = { type: 'hydrogen', label: 'H' };
+            molecule.add(h2);
+            atoms.push(h2);
+
+            // Create bonds
+            if (showBonds) {
+                bonds.push(createBond(oPos, h1Pos, false));
+                bonds.push(createBond(oPos, h2Pos, false));
+                bonds.forEach(bond => molecule.add(bond));
+            }
+
+            // Create lone pairs
+            if (showLonePairs) {
+                const lonePairDistance = 0.9;
+                const lonePairAngle = 104.5 * Math.PI / 180 / 2;
+                
+                // Lone pair 1
+                const lp1Pos = {
+                    x: -lonePairDistance * Math.sin(lonePairAngle),
+                    y: lonePairDistance * Math.cos(lonePairAngle),
+                    z: 0
+                };
+                const lp1 = createLonePair();
+                lp1.position.set(lp1Pos.x, lp1Pos.y, lp1Pos.z);
+                molecule.add(lp1);
+                lonePairs.push(lp1);
+
+                // Lone pair 2
+                const lp2Pos = {
+                    x: lonePairDistance * Math.sin(lonePairAngle),
+                    y: lonePairDistance * Math.cos(lonePairAngle),
+                    z: 0
+                };
+                const lp2 = createLonePair();
+                lp2.position.set(lp2Pos.x, lp2Pos.y, lp2Pos.z);
+                molecule.add(lp2);
+                lonePairs.push(lp2);
+            }
+
+            // Create angle indicators
+            if (showAngles) {
+                const angleArc = createAngleIndicator(h1Pos, oPos, h2Pos, bondAngle);
+                molecule.add(angleArc);
+                angleIndicators.push(angleArc);
+            }
+
+            // Labels
+            if (showLabels) {
+                labels.push(createLabel('O', oPos.x, oPos.y, oPos.z));
+                labels.push(createLabel('H', h1Pos.x, h1Pos.y, h1Pos.z));
+                labels.push(createLabel('H', h2Pos.x, h2Pos.y, h2Pos.z));
+                labels.forEach(label => molecule.add(label));
+            }
+
+            scene.add(molecule);
+        }
+
+        function createAtom(color, size, realistic) {
+            const geometry = new THREE.SphereGeometry(size, 64, 64);
+            const material = realistic ? 
+                new THREE.MeshStandardMaterial({
+                    color: color,
+                    metalness: 0.2,
+                    roughness: 0.4,
+                    emissive: color,
+                    emissiveIntensity: 0.2
+                }) :
+                new THREE.MeshPhongMaterial({
+                    color: color,
+                    shininess: 100,
+                    specular: 0x555555
+                });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        function createBond(pos1, pos2, isDouble) {
+            const group = new THREE.Group();
+            const direction = new THREE.Vector3(pos2.x - pos1.x, pos2.y - pos1.y, pos2.z - pos1.z);
+            const length = direction.length();
+            
+            if (currentStyle === 'wireframe') {
+                const geometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(pos1.x, pos1.y, pos1.z),
+                    new THREE.Vector3(pos2.x, pos2.y, pos2.z)
+                ]);
+                const material = new THREE.LineBasicMaterial({ color: 0x999999, linewidth: 3 });
+                const line = new THREE.Line(geometry, material);
+                group.add(line);
+            } else {
+                const radius = currentStyle === 'realistic' ? 0.12 : 0.1;
+                const geometry = new THREE.CylinderGeometry(radius, radius, length, 16);
+                const material = currentStyle === 'realistic' ?
+                    new THREE.MeshStandardMaterial({ 
+                        color: 0xcccccc,
+                        metalness: 0.3,
+                        roughness: 0.6
+                    }) :
+                    new THREE.MeshPhongMaterial({ color: 0xaaaaaa });
+                const cylinder = new THREE.Mesh(geometry, material);
+                
+                cylinder.position.set((pos1.x + pos2.x) / 2, (pos1.y + pos2.y) / 2, (pos1.z + pos2.z) / 2);
+                const axis = new THREE.Vector3(0, 1, 0);
+                cylinder.quaternion.setFromUnitVectors(axis, direction.normalize());
+                
+                group.add(cylinder);
+            }
+            
+            return group;
+        }
+
+        function createLonePair() {
+            const group = new THREE.Group();
+            
+            // Create two small ellipsoids to represent electron pair
+            for (let i = 0; i < 2; i++) {
+                const geometry = new THREE.SphereGeometry(0.15, 32, 32);
+                geometry.scale(1.5, 1, 1); // Make it elliptical
+                const material = new THREE.MeshBasicMaterial({ 
+                    color: 0xffaa00,
+                    transparent: true,
+                    opacity: 0.5
+                });
+                const sphere = new THREE.Mesh(geometry, material);
+                sphere.position.x = (i - 0.5) * 0.2;
+                group.add(sphere);
+            }
+            
+            return group;
+        }
+
+        function createAngleIndicator(pos1, center, pos2, angle) {
+            const group = new THREE.Group();
+            const radius = 0.5;
+            const segments = 32;
+            
+            // Calculate angle for the arc
+            const angleRad = (angle * Math.PI) / 180;
+            const startAngle = Math.PI / 2 + angleRad / 2;
+            const endAngle = Math.PI / 2 - angleRad / 2;
+            
+            const curve = new THREE.EllipseCurve(
+                0, 0,
+                radius, radius,
+                startAngle, endAngle,
+                true,
+                0
+            );
+            
+            const points = curve.getPoints(segments);
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({ color: 0xffff00, linewidth: 2 });
+            const arc = new THREE.Line(geometry, material);
+            
+            group.add(arc);
+            group.position.set(center.x, center.y, center.z);
+            
+            return group;
+        }
+
+        function createLabel(text, x, y, z) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 128;
+            canvas.height = 128;
+            
+            context.fillStyle = 'rgba(255, 255, 255, 0.95)';
+            context.font = 'Bold 72px Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(text, 64, 64);
+            
+            context.strokeStyle = 'rgba(59, 130, 246, 0.8)';
+            context.lineWidth = 3;
+            context.strokeText(text, 64, 64);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.set(x, y, z + 0.6);
+            sprite.scale.set(0.6, 0.6, 1);
+            
+            return sprite;
+        }
+
+        function clearMolecule() {
+            while(molecule.children.length > 0) {
+                molecule.remove(molecule.children[0]);
+            }
+            atoms = [];
+            bonds = [];
+            labels = [];
+            lonePairs = [];
+            angleIndicators = [];
+        }
+
+        function updateMolecule() {
+            scene.remove(molecule);
+            molecule = new THREE.Group();
+            clearMolecule();
+            createMolecule();
+        }
+
+        function setupControls() {
+            document.getElementById('autoRotateToggle').addEventListener('click', function() {
+                autoRotate = !autoRotate;
+                this.classList.toggle('active');
+            });
+
+            document.getElementById('rotationSpeed').addEventListener('input', function() {
+                rotationSpeed = parseFloat(this.value);
+                document.getElementById('speedValue').textContent = rotationSpeed.toFixed(1) + 'x';
+            });
+
+            document.getElementById('zoomLevel').addEventListener('input', function() {
+                const zoom = parseFloat(this.value);
+                camera.position.z = zoom;
+                document.getElementById('zoomValue').textContent = zoom.toFixed(1);
+            });
+
+            document.getElementById('labelsToggle').addEventListener('click', function() {
+                showLabels = !showLabels;
+                this.classList.toggle('active');
+                updateMolecule();
+            });
+
+            document.getElementById('bondsToggle').addEventListener('click', function() {
+                showBonds = !showBonds;
+                this.classList.toggle('active');
+                updateMolecule();
+            });
+
+            document.getElementById('lonePairsToggle').addEventListener('click', function() {
+                showLonePairs = !showLonePairs;
+                this.classList.toggle('active');
+                updateMolecule();
+            });
+
+            document.getElementById('anglesToggle').addEventListener('click', function() {
+                showAngles = !showAngles;
+                this.classList.toggle('active');
+                updateMolecule();
+            });
+
+            document.getElementById('styleSelect').addEventListener('change', function() {
+                currentStyle = this.value;
+                updateMolecule();
+            });
+
+            document.getElementById('bondAngle').addEventListener('input', function() {
+                bondAngle = parseFloat(this.value);
+                document.getElementById('angleValue').textContent = bondAngle.toFixed(1) + '°';
+                document.getElementById('bondAngleValue').textContent = bondAngle.toFixed(1) + '°';
+                updateMolecule();
+            });
+
+            document.getElementById('bondLength').addEventListener('input', function() {
+                bondLength = parseFloat(this.value);
+                document.getElementById('lengthValue').textContent = bondLength.toFixed(1);
+                updateMolecule();
+            });
+
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const target = this.dataset.target;
+                    document.querySelectorAll(`[data-target="${target}"]`).forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    if (target === 'oxygen') {
+                        oxygenColor = this.dataset.color;
+                    } else if (target === 'hydrogen') {
+                        hydrogenColor = this.dataset.color;
+                    }
+                    updateMolecule();
+                });
+            });
+
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                camera.position.set(0, 0, 8);
+                manualRotation = { x: 0, y: 0 };
+                molecule.rotation.set(0, 0, 0);
+                autoRotate = true;
+                bondAngle = 104.5;
+                bondLength = 1.5;
+                rotationSpeed = 1;
+                vibrationMode = false;
+                
+                document.getElementById('autoRotateToggle').classList.add('active');
+                document.getElementById('bondAngle').value = 104.5;
+                document.getElementById('bondLength').value = 1.5;
+                document.getElementById('rotationSpeed').value = 1;
+                document.getElementById('angleValue').textContent = '104.5°';
+                document.getElementById('bondAngleValue').textContent = '104.5°';
+                document.getElementById('lengthValue').textContent = '1.5';
+                document.getElementById('speedValue').textContent = '1.0x';
+                document.getElementById('zoomLevel').value = 8;
+                document.getElementById('zoomValue').textContent = '8.0';
+                
+                updateMolecule();
+            });
+
+            document.getElementById('animateBtn').addEventListener('click', function() {
+                vibrationMode = !vibrationMode;
+                this.textContent = vibrationMode ? '⏸️ Stop Vibration' : '✨ Vibration Mode';
+                this.style.background = vibrationMode ? 
+                    'linear-gradient(135deg, #ef4444, #dc2626)' : 
+                    'linear-gradient(135deg, #3b82f6, #8b5cf6)';
+            });
+        }
+
+        function setupMouseControls() {
+            const container = document.getElementById('container');
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+                    
+                    manualRotation.y += deltaX * 0.01;
+                    manualRotation.x += deltaY * 0.01;
+                    
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const zoomSpeed = 0.5;
+                camera.position.z += e.deltaY * 0.01 * zoomSpeed;
+                camera.position.z = Math.max(4, Math.min(20, camera.position.z));
+                document.getElementById('zoomLevel').value = camera.position.z;
+                document.getElementById('zoomValue').textContent = camera.position.z.toFixed(1);
+            });
+
+            // Touch support
+            let touchStartX = 0;
+            let touchStartY = 0;
+
+            container.addEventListener('touchstart', (e) => {
+                if (e.touches.length === 1) {
+                    isDragging = true;
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (isDragging && e.touches.length === 1) {
+                    const deltaX = e.touches[0].clientX - touchStartX;
+                    const deltaY = e.touches[0].clientY - touchStartY;
+                    
+                    manualRotation.y += deltaX * 0.01;
+                    manualRotation.x += deltaY * 0.01;
+                    
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }
+            });
+
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Vibration animation
+            if (vibrationMode) {
+                vibrationPhase += 0.1;
+                const vibration = Math.sin(vibrationPhase) * 0.05;
+                
+                if (atoms.length >= 3) {
+                    // Simulate symmetric and asymmetric stretching
+                    atoms[1].position.x = atoms[1].userData.originalX + vibration;
+                    atoms[2].position.x = atoms[2].userData.originalX - vibration;
+                }
+            } else if (atoms.length >= 3 && atoms[1].userData.originalX !== undefined) {
+                // Reset to original positions
+                atoms[1].position.x = atoms[1].userData.originalX;
+                atoms[2].position.x = atoms[2].userData.originalX;
+            }
+
+            // Store original positions for vibration
+            if (atoms.length >= 3 && atoms[1].userData.originalX === undefined) {
+                atoms[1].userData.originalX = atoms[1].position.x;
+                atoms[2].userData.originalX = atoms[2].position.x;
+            }
+
+            if (autoRotate) {
+                molecule.rotation.y += 0.01 * rotationSpeed;
+                molecule.rotation.x += 0.005 * rotationSpeed;
+            } else {
+                molecule.rotation.y = manualRotation.y;
+                molecule.rotation.x = manualRotation.x;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        init();
+    </script>
+</body>
+</html>
