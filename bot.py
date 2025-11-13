@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 USERNAME = os.getenv('USERNAME')
 REPO = os.getenv('REPO')
-GITHUB_BRANCH = 'compounds'
+GITHUB_BRANCH = 'main'  # CHANGED: Using main branch instead of compounds
 
-# GitHub raw URL for fetching files
-GITHUB_RAW_URL = f"https://raw.githubusercontent.com/{USERNAME}/{REPO}/{GITHUB_BRANCH}/"
+# GitHub raw URL for fetching files - CHANGED: Added /compounds/ folder path
+GITHUB_RAW_URL = f"https://raw.githubusercontent.com/{USERNAME}/{REPO}/{GITHUB_BRANCH}/compounds/"
 
 # Load compounds data
 def load_compounds():
@@ -209,8 +209,9 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await loading_msg.edit_text(
                 f"❌ **Error downloading file!**\n\n"
                 f"File: `{compound['file']}`\n"
+                f"URL: `{file_url}`\n"
                 f"Error: Connection timeout or file not found\n\n"
-                f"Please make sure the file exists in the `compounds` branch.",
+                f"Please make sure the file exists at the correct location.",
                 parse_mode='Markdown'
             )
         except Exception as e:
