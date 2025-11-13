@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Benzene Molecule</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        #controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            max-width: 320px;
+            transition: all 0.3s ease;
+        }
+
+        #controls:hover {
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            background: #764ba2;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #667eea;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: #ccc;
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #667eea;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .value-display {
+            display: inline-block;
+            margin-left: 10px;
+            color: #667eea;
+            font-weight: 700;
+            min-width: 40px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        select:hover {
+            border-color: #764ba2;
+        }
+
+        #info {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            max-width: 300px;
+            color: #333;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        #info h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .color-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .color-btn {
+            width: 100%;
+            height: 35px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 0;
+            padding: 0;
+        }
+
+        .color-btn:hover {
+            transform: scale(1.1);
+            border-color: white;
+        }
+
+        .color-btn.active {
+            border-color: #333;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="controls">
+        <h1>⚛️ Benzene Control Panel</h1>
+        
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Auto Rotate</label>
+                <div class="toggle-switch active" id="autoRotateToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Rotation Speed <span class="value-display" id="speedValue">1.0x</span></label>
+            <input type="range" id="rotationSpeed" min="0" max="3" step="0.1" value="1">
+        </div>
+
+        <div class="control-group">
+            <label>Zoom Level <span class="value-display" id="zoomValue">10</span></label>
+            <input type="range" id="zoomLevel" min="5" max="20" step="0.5" value="10">
+        </div>
+
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Show Labels</label>
+                <div class="toggle-switch active" id="labelsToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Show Bonds</label>
+                <div class="toggle-switch active" id="bondsToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <div class="toggle-container">
+                <label>Electron Cloud</label>
+                <div class="toggle-switch" id="electronToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Visualization Style</label>
+            <select id="styleSelect">
+                <option value="ball-stick">Ball & Stick</option>
+                <option value="space-filling">Space Filling</option>
+                <option value="wireframe">Wireframe</option>
+            </select>
+        </div>
+
+        <div class="control-group">
+            <label>Carbon Color Theme</label>
+            <div class="color-options">
+                <button class="color-btn active" style="background: #333;" data-color="#333"></button>
+                <button class="color-btn" style="background: #2196F3;" data-color="#2196F3"></button>
+                <button class="color-btn" style="background: #4CAF50;" data-color="#4CAF50"></button>
+                <button class="color-btn" style="background: #FF9800;" data-color="#FF9800"></button>
+                <button class="color-btn" style="background: #E91E63;" data-color="#E91E63"></button>
+                <button class="color-btn" style="background: #9C27B0;" data-color="#9C27B0"></button>
+            </div>
+        </div>
+
+        <button id="resetBtn">🔄 Reset View</button>
+    </div>
+
+    <div id="info">
+        <h2>Benzene (C₆H₆)</h2>
+        <p><strong>Formula:</strong> C₆H₆</p>
+        <p><strong>Structure:</strong> Hexagonal ring with alternating double bonds</p>
+        <p><strong>Resonance:</strong> Electrons delocalized across the ring</p>
+        <p><strong>Tip:</strong> Drag to rotate, scroll to zoom!</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, benzene;
+        let autoRotate = true;
+        let rotationSpeed = 1;
+        let showLabels = true;
+        let showBonds = true;
+        let showElectrons = false;
+        let currentStyle = 'ball-stick';
+        let carbonColor = '#333';
+        let labels = [];
+        let atoms = [];
+        let bonds = [];
+        let electronCloud = null;
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let manualRotation = { x: 0, y: 0 };
+
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 10;
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const pointLight1 = new THREE.PointLight(0xffffff, 0.8);
+            pointLight1.position.set(10, 10, 10);
+            scene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0xffffff, 0.5);
+            pointLight2.position.set(-10, -10, -10);
+            scene.add(pointLight2);
+
+            // Create benzene molecule
+            createBenzene();
+
+            // Event listeners
+            setupControls();
+            setupMouseControls();
+
+            // Animation loop
+            animate();
+        }
+
+        function createBenzene() {
+            benzene = new THREE.Group();
+
+            // Benzene ring parameters
+            const radius = 2;
+            const angleStep = (Math.PI * 2) / 6;
+
+            // Create carbon and hydrogen atoms
+            for (let i = 0; i < 6; i++) {
+                const angle = i * angleStep;
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+
+                // Carbon atom
+                const carbon = createAtom(carbonColor, currentStyle === 'space-filling' ? 0.8 : 0.4);
+                carbon.position.set(x, y, 0);
+                carbon.userData = { type: 'carbon', index: i };
+                benzene.add(carbon);
+                atoms.push(carbon);
+
+                // Hydrogen atom
+                const hRadius = radius + 1.2;
+                const hx = Math.cos(angle) * hRadius;
+                const hy = Math.sin(angle) * hRadius;
+                const hydrogen = createAtom('#eeeeee', currentStyle === 'space-filling' ? 0.5 : 0.25);
+                hydrogen.position.set(hx, hy, 0);
+                hydrogen.userData = { type: 'hydrogen', index: i };
+                benzene.add(hydrogen);
+                atoms.push(hydrogen);
+
+                // Create bonds
+                if (showBonds) {
+                    // C-C bond
+                    const nextAngle = ((i + 1) % 6) * angleStep;
+                    const nextX = Math.cos(nextAngle) * radius;
+                    const nextY = Math.sin(nextAngle) * radius;
+                    
+                    const bond = createBond(x, y, 0, nextX, nextY, 0, i % 2 === 0);
+                    benzene.add(bond);
+                    bonds.push(bond);
+
+                    // C-H bond
+                    const hBond = createBond(x, y, 0, hx, hy, 0, false);
+                    benzene.add(hBond);
+                    bonds.push(hBond);
+                }
+
+                // Labels
+                if (showLabels) {
+                    const cLabel = createLabel('C', x, y, 0);
+                    benzene.add(cLabel);
+                    labels.push(cLabel);
+
+                    const hLabel = createLabel('H', hx, hy, 0);
+                    benzene.add(hLabel);
+                    labels.push(hLabel);
+                }
+            }
+
+            // Electron cloud
+            if (showElectrons) {
+                electronCloud = createElectronCloud();
+                benzene.add(electronCloud);
+            }
+
+            scene.add(benzene);
+        }
+
+        function createAtom(color, size) {
+            const geometry = new THREE.SphereGeometry(size, 32, 32);
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                shininess: 100,
+                specular: 0x444444
+            });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        function createBond(x1, y1, z1, x2, y2, z2, isDouble) {
+            const group = new THREE.Group();
+            const direction = new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1);
+            const length = direction.length();
+            
+            if (currentStyle === 'wireframe') {
+                const geometry = new THREE.BufferGeometry().setFromPoints([
+                    new THREE.Vector3(x1, y1, z1),
+                    new THREE.Vector3(x2, y2, z2)
+                ]);
+                const material = new THREE.LineBasicMaterial({ color: 0x888888, linewidth: 2 });
+                const line = new THREE.Line(geometry, material);
+                group.add(line);
+            } else {
+                const geometry = new THREE.CylinderGeometry(0.08, 0.08, length, 8);
+                const material = new THREE.MeshPhongMaterial({ color: 0x888888 });
+                const cylinder = new THREE.Mesh(geometry, material);
+                
+                cylinder.position.set((x1 + x2) / 2, (y1 + y2) / 2, (z1 + z2) / 2);
+                const axis = new THREE.Vector3(0, 1, 0);
+                cylinder.quaternion.setFromUnitVectors(axis, direction.normalize());
+                
+                group.add(cylinder);
+
+                if (isDouble) {
+                    const cylinder2 = cylinder.clone();
+                    cylinder2.position.x += 0.15;
+                    group.add(cylinder2);
+                }
+            }
+            
+            return group;
+        }
+
+        function createLabel(text, x, y, z) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 128;
+            canvas.height = 128;
+            
+            context.fillStyle = 'white';
+            context.font = 'Bold 72px Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.fillText(text, 64, 64);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.set(x, y, z + 0.5);
+            sprite.scale.set(0.5, 0.5, 1);
+            
+            return sprite;
+        }
+
+        function createElectronCloud() {
+            const geometry = new THREE.TorusGeometry(2, 0.3, 16, 100);
+            const material = new THREE.MeshBasicMaterial({
+                color: 0x00ffff,
+                transparent: true,
+                opacity: 0.3,
+                wireframe: true
+            });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        function clearBenzene() {
+            while(benzene.children.length > 0) {
+                benzene.remove(benzene.children[0]);
+            }
+            atoms = [];
+            bonds = [];
+            labels = [];
+            electronCloud = null;
+        }
+
+        function updateBenzene() {
+            scene.remove(benzene);
+            benzene = new THREE.Group();
+            clearBenzene();
+            createBenzene();
+        }
+
+        function setupControls() {
+            // Auto rotate toggle
+            document.getElementById('autoRotateToggle').addEventListener('click', function() {
+                autoRotate = !autoRotate;
+                this.classList.toggle('active');
+            });
+
+            // Rotation speed
+            document.getElementById('rotationSpeed').addEventListener('input', function() {
+                rotationSpeed = parseFloat(this.value);
+                document.getElementById('speedValue').textContent = rotationSpeed.toFixed(1) + 'x';
+            });
+
+            // Zoom level
+            document.getElementById('zoomLevel').addEventListener('input', function() {
+                const zoom = parseFloat(this.value);
+                camera.position.z = zoom;
+                document.getElementById('zoomValue').textContent = zoom.toFixed(1);
+            });
+
+            // Labels toggle
+            document.getElementById('labelsToggle').addEventListener('click', function() {
+                showLabels = !showLabels;
+                this.classList.toggle('active');
+                updateBenzene();
+            });
+
+            // Bonds toggle
+            document.getElementById('bondsToggle').addEventListener('click', function() {
+                showBonds = !showBonds;
+                this.classList.toggle('active');
+                updateBenzene();
+            });
+
+            // Electron cloud toggle
+            document.getElementById('electronToggle').addEventListener('click', function() {
+                showElectrons = !showElectrons;
+                this.classList.toggle('active');
+                updateBenzene();
+            });
+
+            // Style select
+            document.getElementById('styleSelect').addEventListener('change', function() {
+                currentStyle = this.value;
+                updateBenzene();
+            });
+
+            // Color buttons
+            document.querySelectorAll('.color-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    carbonColor = this.dataset.color;
+                    updateBenzene();
+                });
+            });
+
+            // Reset button
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                camera.position.set(0, 0, 10);
+                manualRotation = { x: 0, y: 0 };
+                benzene.rotation.set(0, 0, 0);
+                autoRotate = true;
+                document.getElementById('autoRotateToggle').classList.add('active');
+            });
+        }
+
+        function setupMouseControls() {
+            const container = document.getElementById('container');
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+                    
+                    manualRotation.y += deltaX * 0.01;
+                    manualRotation.x += deltaY * 0.01;
+                    
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const zoomSpeed = 0.5;
+                camera.position.z += e.deltaY * 0.01 * zoomSpeed;
+                camera.position.z = Math.max(5, Math.min(20, camera.position.z));
+                document.getElementById('zoomLevel').value = camera.position.z;
+                document.getElementById('zoomValue').textContent = camera.position.z.toFixed(1);
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (autoRotate) {
+                benzene.rotation.y += 0.01 * rotationSpeed;
+                benzene.rotation.x += 0.005 * rotationSpeed;
+            } else {
+                benzene.rotation.y = manualRotation.y;
+                benzene.rotation.x = manualRotation.x;
+            }
+
+            if (electronCloud) {
+                electronCloud.rotation.z += 0.02;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
