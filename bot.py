@@ -14,8 +14,8 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-GITHUB_USERNAME = os.getenv('USERNAME')
-GITHUB_REPO = os.getenv('REPO')
+USERNAME = os.getenv('USERNAME')
+REPO = os.getenv('REPO')
 GITHUB_BRANCH = 'compounds'
 
 # GitHub raw URL for fetching files
