@@ -239,8 +239,8 @@ def main():
         logger.error("BOT_TOKEN not found! Please set it in environment variables.")
         return
     
-    if not GITHUB_USERNAME or not GITHUB_REPO:
-        logger.error("GitHub configuration not found! Please set GITHUB_USERNAME and GITHUB_REPO.")
+    if not USERNAME or not REPO:
+        logger.error("GitHub configuration not found! Please set USERNAME and REPO.")
         return
     
     if not COMPOUNDS:
