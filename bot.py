@@ -5,6 +5,11 @@ import requests
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
+# ===== ADD THESE 2 LINES =====
+from keep_alive import keep_alive
+keep_alive()
+# =============================
+
 # Configure logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -14,12 +19,12 @@ logger = logging.getLogger(__name__)
 
 # Configuration
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-USERNAME = os.getenv('USERNAME')
-REPO = os.getenv('REPO')
-GITHUB_BRANCH = 'main'  # CHANGED: Using main branch instead of compounds
+GITHUB_USERNAME = os.getenv('USERNAME')
+GITHUB_REPO = os.getenv('REPO')
+GITHUB_BRANCH = 'compounds'
 
-# GitHub raw URL for fetching files - CHANGED: Added /compounds/ folder path
-GITHUB_RAW_URL = f"https://raw.githubusercontent.com/{USERNAME}/{REPO}/{GITHUB_BRANCH}/compounds/"
+# GitHub raw URL for fetching files
+GITHUB_RAW_URL = f"https://raw.githubusercontent.com/{GITHUB_USERNAME}/{GITHUB_REPO}/{GITHUB_BRANCH}/"
 
 # Load compounds data
 def load_compounds():
@@ -209,9 +214,8 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await loading_msg.edit_text(
                 f"❌ **Error downloading file!**\n\n"
                 f"File: `{compound['file']}`\n"
-                f"URL: `{file_url}`\n"
                 f"Error: Connection timeout or file not found\n\n"
-                f"Please make sure the file exists at the correct location.",
+                f"Please make sure the file exists in the `compounds` branch.",
                 parse_mode='Markdown'
             )
         except Exception as e:
@@ -240,8 +244,8 @@ def main():
         logger.error("BOT_TOKEN not found! Please set it in environment variables.")
         return
     
-    if not USERNAME or not REPO:
-        logger.error("GitHub configuration not found! Please set USERNAME and REPO.")
+    if not GITHUB_USERNAME or not GITHUB_REPO:
+        logger.error("GitHub configuration not found! Please set GITHUB_USERNAME and GITHUB_REPO.")
         return
     
     if not COMPOUNDS:
