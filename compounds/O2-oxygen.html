@@ -50,7 +50,7 @@
         #controls {
             position: absolute;
             top: 30px;
-            left: 30px;
+            right: 30px;
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(20px) saturate(180%);
             padding: 0;
@@ -356,8 +356,8 @@
         /* Premium Info Card */
         #info {
             position: absolute;
-            top: 30px;
-            right: 30px;
+            bottom: 30px;
+            left: 30px;
             background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(20px) saturate(180%);
             padding: 20px 24px;
@@ -367,21 +367,6 @@
             max-width: 300px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             animation: fadeIn 0.8s ease 0.5s backwards;
-            max-height: calc(100vh - 60px);
-            overflow-y: auto;
-        }
-
-        #info::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        #info::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        #info::-webkit-scrollbar-thumb {
-            background: rgba(59, 130, 246, 0.5);
-            border-radius: 2px;
         }
 
         @keyframes fadeIn {
@@ -738,8 +723,8 @@
             const texture = new THREE.CanvasTexture(canvas);
             const material = new THREE.SpriteMaterial({ map: texture });
             const sprite = new THREE.Sprite(material);
-            sprite.position.set(x, y, z + 1);
-            sprite.scale.set(0.8, 0.8, 1);
+            sprite.position.set(x, y - 0.8, z);
+            sprite.scale.set(0.6, 0.6, 1);
             
             return sprite;
         }
