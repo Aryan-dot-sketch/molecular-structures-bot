@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium NaCl Crystal Visualizer</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e27;
+            overflow: hidden;
+            height: 100vh;
+            color: #fff;
+        }
+
+        #container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Animated gradient background */
+        #container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(59, 130, 246, 0.15) 0%, transparent 50%);
+            animation: gradientShift 15s ease infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* Premium Control Panel */
+        #controls {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            padding: 0;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        0 0 1px rgba(255, 255, 255, 0.1) inset;
+            z-index: 100;
+            width: 320px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 24px 28px;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ec4899 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+        }
+
+        .panel-content {
+            padding: 24px 28px;
+            max-height: calc(100vh - 200px);
+            overflow-y: auto;
+        }
+
+        .panel-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .panel-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .panel-content::-webkit-scrollbar-thumb {
+            background: rgba(236, 72, 153, 0.5);
+            border-radius: 3px;
+        }
+
+        .control-group {
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease backwards;
+        }
+
+        .control-group:nth-child(1) { animation-delay: 0.1s; }
+        .control-group:nth-child(2) { animation-delay: 0.2s; }
+        .control-group:nth-child(3) { animation-delay: 0.3s; }
+        .control-group:nth-child(4) { animation-delay: 0.4s; }
+        .control-group:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 13px;
+            letter-spacing: 0.2px;
+        }
+
+        .value-display {
+            color: #ec4899;
+            font-weight: 600;
+            font-size: 12px;
+            background: rgba(236, 72, 153, 0.1);
+            padding: 4px 10px;
+            border-radius: 8px;
+        }
+
+        /* Premium Range Slider */
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.05);
+            outline: none;
+            -webkit-appearance: none;
+            position: relative;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899 0%, #3b82f6 100%);
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4),
+                        0 0 0 4px rgba(236, 72, 153, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 16px rgba(236, 72, 153, 0.6),
+                        0 0 0 6px rgba(236, 72, 153, 0.15);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ec4899 0%, #3b82f6 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+        }
+
+        /* Premium Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .toggle-container:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(236, 72, 153, 0.3);
+        }
+
+        .toggle-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 13px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .toggle-switch.active {
+            background: linear-gradient(135deg, #ec4899 0%, #3b82f6 100%);
+            border-color: transparent;
+            box-shadow: 0 4px 16px rgba(236, 72, 153, 0.4);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(22px);
+        }
+
+        /* Premium Select Dropdown */
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        select:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(236, 72, 153, 0.3);
+        }
+
+        select:focus {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+        }
+
+        select option {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* Premium Button */
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #ec4899 0%, #3b82f6 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(236, 72, 153, 0.3);
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.3px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(236, 72, 153, 0.5);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Premium Info Card */
+        #info {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                        0 0 1px rgba(255, 255, 255, 0.1) inset;
+            max-width: 340px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            animation: fadeIn 0.8s ease 0.5s backwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        #info h2 {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ec4899 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 13px;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: rgba(255, 255, 255, 0.95);
+            font-weight: 600;
+        }
+
+        .tip {
+            margin-top: 16px;
+            padding: 12px;
+            background: rgba(236, 72, 153, 0.1);
+            border-radius: 10px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container"></div>
+    
+    <div id="controls">
+        <div class="panel-header">
+            <h1>NaCl Visualizer</h1>
+            <div class="subtitle">Sodium Chloride Crystal</div>
+        </div>
+        
+        <div class="panel-content">
+            <div class="control-group">
+                <div class="toggle-container" id="autoRotateToggle">
+                    <span class="toggle-label">Auto Rotation</span>
+                    <div class="toggle-switch active">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <span>Rotation Speed</span>
+                    <span class="value-display" id="speedValue">1.0×</span>
+                </label>
+                <input type="range" id="rotationSpeed" min="0" max="3" step="0.1" value="1">
+            </div>
+
+            <div class="control-group">
+                <label>
+                    <span>Zoom Level</span>
+                    <span class="value-display" id="zoomValue">15</span>
+                </label>
+                <input type="range" id="zoomLevel" min="8" max="25" step="0.5" value="15">
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="control-group">
+                <div class="toggle-container" id="labelsToggle">
+                    <span class="toggle-label">Ion Labels</span>
+                    <div class="toggle-switch active">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="toggle-container" id="bondsToggle">
+                    <span class="toggle-label">Ionic Bonds</span>
+                    <div class="toggle-switch active">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="toggle-container" id="chargesToggle">
+                    <span class="toggle-label">Show Charges (+ / −)</span>
+                    <div class="toggle-switch">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="control-group">
+                <label>Crystal Size</label>
+                <select id="sizeSelect">
+                    <option value="2">2×2×2 Unit Cells</option>
+                    <option value="3" selected>3×3×3 Unit Cells</option>
+                    <option value="4">4×4×4 Unit Cells</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>Visualization Style</label>
+                <select id="styleSelect">
+                    <option value="ball-stick">Ball & Stick Model</option>
+                    <option value="space-filling">Space Filling Model</option>
+                    <option value="ionic">Ionic Model</option>
+                </select>
+            </div>
+
+            <div class="divider"></div>
+
+            <button id="resetBtn">↻ Reset to Default View</button>
+        </div>
+    </div>
+
+    <div id="info">
+        <h2>Sodium Chloride</h2>
+        <div class="info-row">
+            <span class="info-label">Formula</span>
+            <span class="info-value">NaCl</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Common Name</span>
+            <span class="info-value">Table Salt</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Structure</span>
+            <span class="info-value">Face-Centered Cubic</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Bond Type</span>
+            <span class="info-value">Ionic (electrostatic)</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Na⁺ Charge</span>
+            <span class="info-value">+1</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">Cl⁻ Charge</span>
+            <span class="info-value">−1</span>
+        </div>
+        <div class="tip">
+            🧂 <strong>Tip:</strong> This shows the classic cubic crystal lattice structure of table salt!
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        let scene, camera, renderer, crystal;
+        let autoRotate = true;
+        let rotationSpeed = 1;
+        let showLabels = true;
+        let showBonds = true;
+        let showCharges = false;
+        let currentStyle = 'ball-stick';
+        let crystalSize = 3;
+        let labels = [];
+        let charges = [];
+        let atoms = [];
+        let bonds = [];
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let manualRotation = { x: 0, y: 0 };
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0e27);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 15;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            // Premium lighting setup
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+
+            const keyLight = new THREE.DirectionalLight(0xec4899, 0.8);
+            keyLight.position.set(10, 10, 10);
+            scene.add(keyLight);
+
+            const fillLight = new THREE.DirectionalLight(0x3b82f6, 0.6);
+            fillLight.position.set(-10, 5, -10);
+            scene.add(fillLight);
+
+            const rimLight = new THREE.PointLight(0x8b5cf6, 0.7);
+            rimLight.position.set(0, 10, -10);
+            scene.add(rimLight);
+
+            createCrystal();
+            setupControls();
+            setupMouseControls();
+            animate();
+        }
+
+        function createCrystal() {
+            crystal = new THREE.Group();
+
+            const spacing = 1.5; // Distance between ions
+            const offset = (crystalSize - 1) * spacing / 2;
+
+            // Create NaCl crystal lattice (face-centered cubic structure)
+            for (let x = 0; x < crystalSize; x++) {
+                for (let y = 0; y < crystalSize; y++) {
+                    for (let z = 0; z < crystalSize; z++) {
+                        const posX = x * spacing - offset;
+                        const posY = y * spacing - offset;
+                        const posZ = z * spacing - offset;
+
+                        // Alternating Na+ and Cl- in checkerboard pattern
+                        const isSodium = (x + y + z) % 2 === 0;
+
+                        if (isSodium) {
+                            // Sodium ion (Na+) - smaller, silver/purple
+                            const na = createAtom('#c084fc', currentStyle === 'space-filling' ? 0.5 : 0.35);
+                            na.position.set(posX, posY, posZ);
+                            na.userData = { type: 'sodium', label: 'Na', charge: '+' };
+                            crystal.add(na);
+                            atoms.push(na);
+
+                            if (showLabels && crystalSize <= 3) {
+                                const label = createLabel('Na', posX, posY, posZ + 0.7);
+                                crystal.add(label);
+                                labels.push(label);
+                            }
+
+                            if (showCharges && crystalSize <= 3) {
+                                const charge = createChargeLabel('+', posX, posY + 0.6, posZ, 'positive');
+                                crystal.add(charge);
+                                charges.push(charge);
+                            }
+                        } else {
+                            // Chloride ion (Cl-) - larger, green/cyan
+                            const cl = createAtom('#10b981', currentStyle === 'space-filling' ? 0.65 : 0.45);
+                            cl.position.set(posX, posY, posZ);
+                            cl.userData = { type: 'chloride', label: 'Cl', charge: '-' };
+                            crystal.add(cl);
+                            atoms.push(cl);
+
+                            if (showLabels && crystalSize <= 3) {
+                                const label = createLabel('Cl', posX, posY, posZ + 0.7);
+                                crystal.add(label);
+                                labels.push(label);
+                            }
+
+                            if (showCharges && crystalSize <= 3) {
+                                const charge = createChargeLabel('−', posX, posY + 0.8, posZ, 'negative');
+                                crystal.add(charge);
+                                charges.push(charge);
+                            }
+                        }
+
+                        // Create ionic bonds (lines to nearest neighbors)
+                        if (showBonds && currentStyle !== 'ionic') {
+                            // Only show some bonds to avoid clutter
+                            if (x < crystalSize - 1) {
+                                const bond = createBond(
+                                    { x: posX, y: posY, z: posZ },
+                                    { x: posX + spacing, y: posY, z: posZ }
+                                );
+                                crystal.add(bond);
+                                bonds.push(bond);
+                            }
+                            if (y < crystalSize - 1) {
+                                const bond = createBond(
+                                    { x: posX, y: posY, z: posZ },
+                                    { x: posX, y: posY + spacing, z: posZ }
+                                );
+                                crystal.add(bond);
+                                bonds.push(bond);
+                            }
+                            if (z < crystalSize - 1) {
+                                const bond = createBond(
+                                    { x: posX, y: posY, z: posZ },
+                                    { x: posX, y: posY, z: posZ + spacing }
+                                );
+                                crystal.add(bond);
+                                bonds.push(bond);
+                            }
+                        }
+                    }
+                }
+            }
+
+            scene.add(crystal);
+        }
+
+        function createAtom(color, size) {
+            const geometry = new THREE.SphereGeometry(size, 32, 32);
+            const material = new THREE.MeshPhongMaterial({
+                color: color,
+                shininess: 100,
+                specular: 0x666666,
+                emissive: color,
+                emissiveIntensity: 0.15,
+                transparent: currentStyle === 'ionic',
+                opacity: currentStyle === 'ionic' ? 0.7 : 1
+            });
+            return new THREE.Mesh(geometry, material);
+        }
+
+        function createBond(pos1, pos2) {
+            const direction = new THREE.Vector3(pos2.x - pos1.x, pos2.y - pos1.y, pos2.z - pos1.z);
+            const length = direction.length();
+            
+            const geometry = new THREE.CylinderGeometry(0.04, 0.04, length, 8);
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x64748b,
+                shininess: 60,
+                transparent: true,
+                opacity: 0.3
+            });
+            const cylinder = new THREE.Mesh(geometry, material);
+            
+            cylinder.position.set((pos1.x + pos2.x) / 2, (pos1.y + pos2.y) / 2, (pos1.z + pos2.z) / 2);
+            const axis = new THREE.Vector3(0, 1, 0);
+            cylinder.quaternion.setFromUnitVectors(axis, direction.normalize());
+            
+            return cylinder;
+        }
+
+        function createLabel(text, x, y, z) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 256;
+            canvas.height = 256;
+            
+            context.fillStyle = 'white';
+            context.font = 'Bold 100px Inter, Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            context.shadowBlur = 20;
+            context.fillText(text, 128, 128);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.set(x, y, z);
+            sprite.scale.set(0.5, 0.5, 1);
+            
+            return sprite;
+        }
+
+        function createChargeLabel(text, x, y, z, type) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            canvas.width = 256;
+            canvas.height = 256;
+            
+            context.fillStyle = type === 'positive' ? '#c084fc' : '#10b981';
+            context.font = 'Bold 120px Inter, Arial';
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+            context.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            context.shadowBlur = 20;
+            context.fillText(text, 128, 128);
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture });
+            const sprite = new THREE.Sprite(material);
+            sprite.position.set(x, y, z);
+            sprite.scale.set(0.4, 0.4, 1);
+            
+            return sprite;
+        }
+
+        function clearCrystal() {
+            while(crystal.children.length > 0) {
+                crystal.remove(crystal.children[0]);
+            }
+            atoms = [];
+            bonds = [];
+            labels = [];
+            charges = [];
+        }
+
+        function updateCrystal() {
+            scene.remove(crystal);
+            crystal = new THREE.Group();
+            clearCrystal();
+            createCrystal();
+        }
+
+        function setupControls() {
+            document.getElementById('autoRotateToggle').addEventListener('click', function() {
+                const switchEl = this.querySelector('.toggle-switch');
+                switchEl.classList.toggle('active');
+                autoRotate = !autoRotate;
+            });
+
+            document.getElementById('labelsToggle').addEventListener('click', function() {
+                const switchEl = this.querySelector('.toggle-switch');
+                switchEl.classList.toggle('active');
+                showLabels = !showLabels;
+                updateCrystal();
+            });
+
+            document.getElementById('bondsToggle').addEventListener('click', function() {
+                const switchEl = this.querySelector('.toggle-switch');
+                switchEl.classList.toggle('active');
+                showBonds = !showBonds;
+                updateCrystal();
+            });
+
+            document.getElementById('chargesToggle').addEventListener('click', function() {
+                const switchEl = this.querySelector('.toggle-switch');
+                switchEl.classList.toggle('active');
+                showCharges = !showCharges;
+                updateCrystal();
+            });
+
+            document.getElementById('rotationSpeed').addEventListener('input', function() {
+                rotationSpeed = parseFloat(this.value);
+                document.getElementById('speedValue').textContent = rotationSpeed.toFixed(1) + '×';
+            });
+
+            document.getElementById('zoomLevel').addEventListener('input', function() {
+                const zoom = parseFloat(this.value);
+                camera.position.z = zoom;
+                document.getElementById('zoomValue').textContent = zoom.toFixed(0);
+            });
+
+            document.getElementById('sizeSelect').addEventListener('change', function() {
+                crystalSize = parseInt(this.value);
+                updateCrystal();
+            });
+
+            document.getElementById('styleSelect').addEventListener('change', function() {
+                currentStyle = this.value;
+                updateCrystal();
+            });
+
+            document.getElementById('resetBtn').addEventListener('click', function() {
+                camera.position.set(0, 0, 15);
+                manualRotation = { x: 0, y: 0 };
+                crystal.rotation.set(0, 0, 0);
+                autoRotate = true;
+                document.querySelector('#autoRotateToggle .toggle-switch').classList.add('active');
+            });
+        }
+
+        function setupMouseControls() {
+            const container = document.getElementById('container');
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                previousMousePosition = { x: e.clientX, y: e.clientY };
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const deltaX = e.clientX - previousMousePosition.x;
+                    const deltaY = e.clientY - previousMousePosition.y;
+                    
+                    manualRotation.y += deltaX * 0.01;
+                    manualRotation.x += deltaY * 0.01;
+                    
+                    previousMousePosition = { x: e.clientX, y: e.clientY };
+                }
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDragging = false;
+            });
+
+            container.addEventListener('wheel', (e) => {
+                e.preventDefault();
+                const zoomSpeed = 0.5;
+                camera.position.z += e.deltaY * 0.01 * zoomSpeed;
+                camera.position.z = Math.max(8, Math.min(25, camera.position.z));
+                document.getElementById('zoomLevel').value = camera.position.z;
+                document.getElementById('zoomValue').textContent = camera.position.z.toFixed(0);
+            }, { passive: false });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            if (autoRotate) {
+                crystal.rotation.y += 0.006 * rotationSpeed;
+                crystal.rotation.x += 0.003 * rotationSpeed;
+            } else {
+                crystal.rotation.y = manualRotation.y;
+                crystal.rotation.x = manualRotation.x;
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        init();
+    </script>
+</body>
+</html>
