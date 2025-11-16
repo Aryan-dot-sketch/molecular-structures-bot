@@ -187,10 +187,11 @@ async def button_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     f"🧪 **{compound['formula']} - {compound['name']}**\n\n"
                     f"📄 Download complete!\n\n"
                     f"**How to view:**\n"
-                    f"1. Download the file\n"
-                    f"2. Open with Chrome/Firefox\n"
-                    f"3. Interact with the 3D structure!\n\n"
-                    f"💡 *Tip: You can rotate, zoom, and explore the molecule!*"
+                    f"1. Download the HTML file\n"
+                    f"2. Open with Chrome (Desktop Mode recommended)\n"
+                    f"3. For mobile: Tap menu (⋮) → 'Desktop site' ✓\n"
+                    f"4. Interact with the 3D structure!\n\n"
+                    f"💡 *Tip: You can rotate, zoom, and explore the molecule with your mouse or touch!*"
                 ),
                 parse_mode='Markdown'
             )
