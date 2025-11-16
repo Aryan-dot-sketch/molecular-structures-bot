@@ -21,10 +21,10 @@ logger = logging.getLogger(__name__)
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 GITHUB_USERNAME = os.getenv('USERNAME')
 GITHUB_REPO = os.getenv('REPO')
-GITHUB_BRANCH = 'compounds'
+GITHUB_BRANCH = 'main'
 
 # GitHub raw URL for fetching files
-GITHUB_RAW_URL = f"https://raw.githubusercontent.com/{GITHUB_USERNAME}/{GITHUB_REPO}/{GITHUB_BRANCH}/"
+GITHUB_RAW_URL = f"https://raw.githubusercontent.com/{GITHUB_USERNAME}/{GITHUB_REPO}/{GITHUB_BRANCH}/compounds/"
 
 # Load compounds data
 def load_compounds():
