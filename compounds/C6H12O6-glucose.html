@@ -60,19 +60,33 @@
             top: 20px;
             right: 20px;
             background: rgba(20, 10, 5, 0.95);
-            backdrop-filter: blur(40px) saturate(180%);
+            backdrop-filter: blur(20px);
             padding: 0;
-            border-radius: 20px;
-            box-shadow: 
-                0 20px 60px rgba(255, 100, 20, 0.3),
-                0 0 0 1px rgba(255, 140, 50, 0.2),
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(255, 100, 20, 0.3);
             z-index: 100;
-            width: 240px;
+            width: 200px;
             max-height: calc(100vh - 40px);
-            border: 2px solid rgba(255, 140, 50, 0.15);
+            border: 1px solid rgba(255, 140, 50, 0.2);
             overflow: hidden;
-            animation: slideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 0.3s ease;
+        }
+
+        #controls.collapsed {
+            width: 50px;
+            height: 50px;
+        }
+
+        #controls.collapsed .panel-content,
+        #controls.collapsed .panel-header .subtitle,
+        #controls.collapsed .panel-header .energy-badge {
+            display: none;
+        }
+
+        #controls.collapsed h1 {
+            font-size: 16px;
+            writing-mode: vertical-rl;
+            margin: 0;
         }
 
         @keyframes slideIn {
@@ -81,60 +95,57 @@
         }
 
         .panel-header {
-            padding: 16px 20px;
+            padding: 12px 16px;
             background: linear-gradient(135deg, rgba(255, 140, 50, 0.2) 0%, rgba(255, 80, 20, 0.2) 100%);
-            border-bottom: 2px solid rgba(255, 140, 50, 0.2);
+            border-bottom: 1px solid rgba(255, 140, 50, 0.2);
             position: relative;
-            overflow: hidden;
+            cursor: pointer;
         }
 
-        .panel-header::before {
-            content: '';
+        .panel-header::after {
+            content: '▼';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 200%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 180, 80, 0.1), transparent);
-            animation: shimmer 3s infinite;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            transition: transform 0.3s;
         }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        #controls.collapsed .panel-header::after {
+            transform: translateY(-50%) rotate(-90deg);
         }
 
         h1 {
-            font-size: 20px;
+            font-size: 16px;
             font-weight: 800;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 50%, #ffb450 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             letter-spacing: -0.5px;
-            filter: drop-shadow(0 2px 8px rgba(255, 140, 50, 0.3));
             position: relative;
         }
 
         .subtitle {
-            font-size: 10px;
+            font-size: 9px;
             color: rgba(255, 180, 100, 0.8);
             font-weight: 600;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .energy-badge {
             display: inline-flex;
             align-items: center;
-            gap: 4px;
-            margin-top: 6px;
-            padding: 4px 10px;
+            gap: 3px;
+            margin-top: 4px;
+            padding: 3px 8px;
             background: linear-gradient(135deg, rgba(255, 140, 50, 0.25), rgba(255, 80, 20, 0.25));
-            border-radius: 16px;
+            border-radius: 12px;
             border: 1px solid rgba(255, 140, 50, 0.4);
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 700;
             color: #ffb450;
             letter-spacing: 0.3px;
@@ -142,8 +153,7 @@
 
         .energy-badge::before {
             content: '⚡';
-            font-size: 11px;
-            animation: pulse 2s ease-in-out infinite;
+            font-size: 10px;
         }
 
         @keyframes pulse {
@@ -152,8 +162,8 @@
         }
 
         .panel-content {
-            padding: 16px 20px 20px;
-            max-height: calc(100vh - 200px);
+            padding: 12px 16px 16px;
+            max-height: calc(100vh - 160px);
             overflow-y: auto;
             overflow-x: hidden;
         }
@@ -174,198 +184,119 @@
         }
 
         .control-group {
-            margin-bottom: 14px;
-            animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
-        }
-
-        .control-group:nth-child(1) { animation-delay: 0.05s; }
-        .control-group:nth-child(2) { animation-delay: 0.1s; }
-        .control-group:nth-child(3) { animation-delay: 0.15s; }
-        .control-group:nth-child(4) { animation-delay: 0.2s; }
-        .control-group:nth-child(5) { animation-delay: 0.25s; }
-        .control-group:nth-child(6) { animation-delay: 0.3s; }
-        .control-group:nth-child(7) { animation-delay: 0.35s; }
-        .control-group:nth-child(8) { animation-delay: 0.4s; }
-        .control-group:nth-child(9) { animation-delay: 0.45s; }
-        .control-group:nth-child(10) { animation-delay: 0.5s; }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            margin-bottom: 10px;
         }
 
         label {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             color: rgba(255, 220, 180, 0.95);
-            font-weight: 700;
-            font-size: 11px;
-            letter-spacing: 0.3px;
+            font-weight: 600;
+            font-size: 10px;
+            letter-spacing: 0.2px;
         }
 
         .value-display {
             color: #ff8c32;
-            font-weight: 800;
-            font-size: 10px;
+            font-weight: 700;
+            font-size: 9px;
             background: rgba(255, 140, 50, 0.2);
-            padding: 3px 8px;
-            border-radius: 8px;
+            padding: 2px 6px;
+            border-radius: 6px;
             border: 1px solid rgba(255, 140, 50, 0.4);
             font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 2px 8px rgba(255, 140, 50, 0.2);
         }
 
         input[type="range"] {
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            height: 6px;
+            border-radius: 3px;
             background: linear-gradient(90deg, rgba(255, 140, 50, 0.15), rgba(255, 80, 20, 0.15));
             outline: none;
             -webkit-appearance: none;
-            position: relative;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 100%);
             cursor: pointer;
-            box-shadow: 
-                0 4px 12px rgba(255, 140, 50, 0.6),
-                0 0 0 3px rgba(255, 140, 50, 0.2),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-            box-shadow: 
-                0 6px 16px rgba(255, 140, 50, 0.8),
-                0 0 0 5px rgba(255, 140, 50, 0.25),
-                inset 0 -2px 4px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(255, 140, 50, 0.5);
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 100%);
             cursor: pointer;
             border: none;
-            box-shadow: 0 4px 12px rgba(255, 140, 50, 0.6);
+            box-shadow: 0 2px 8px rgba(255, 140, 50, 0.5);
         }
 
         .toggle-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 12px;
+            padding: 8px 10px;
             background: rgba(255, 140, 50, 0.05);
-            border-radius: 10px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 140, 50, 0.15);
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .toggle-container::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255, 140, 50, 0.1), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .toggle-container:hover::before {
-            opacity: 1;
-        }
-
-        .toggle-container:hover {
-            background: rgba(255, 140, 50, 0.1);
-            border-color: rgba(255, 140, 50, 0.4);
-            transform: translateX(-3px);
-            box-shadow: 0 8px 20px rgba(255, 140, 50, 0.2);
         }
 
         .toggle-label {
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 10px;
+            font-weight: 600;
             color: rgba(255, 220, 180, 0.95);
-            position: relative;
         }
 
         .toggle-switch {
             position: relative;
-            width: 40px;
-            height: 22px;
+            width: 36px;
+            height: 20px;
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 11px;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 2px solid rgba(255, 140, 50, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 140, 50, 0.2);
         }
 
         .toggle-switch.active {
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 100%);
             border-color: transparent;
-            box-shadow: 
-                0 6px 25px rgba(255, 140, 50, 0.6),
-                inset 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .toggle-slider {
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 14px;
-            height: 14px;
-            background: linear-gradient(135deg, #fff 0%, #ffe0c0 100%);
+            width: 12px;
+            height: 12px;
+            background: white;
             border-radius: 50%;
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s;
         }
 
         .toggle-switch.active .toggle-slider {
-            transform: translateX(18px);
+            transform: translateX(16px);
         }
 
         select {
             width: 100%;
-            padding: 10px 12px;
-            border: 2px solid rgba(255, 140, 50, 0.15);
-            border-radius: 10px;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 140, 50, 0.15);
+            border-radius: 8px;
             background: rgba(255, 140, 50, 0.05);
             color: rgba(255, 220, 180, 0.95);
-            font-size: 11px;
-            font-weight: 700;
+            font-size: 10px;
+            font-weight: 600;
             cursor: pointer;
             outline: none;
-            transition: all 0.3s ease;
             font-family: 'Space Grotesk', sans-serif;
-        }
-
-        select:hover {
-            background: rgba(255, 140, 50, 0.1);
-            border-color: rgba(255, 140, 50, 0.4);
-            box-shadow: 0 6px 20px rgba(255, 140, 50, 0.2);
-        }
-
-        select:focus {
-            border-color: #ff8c32;
-            box-shadow: 0 0 0 4px rgba(255, 140, 50, 0.2);
         }
 
         select option {
@@ -375,70 +306,34 @@
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 8px;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 12px;
-            font-weight: 800;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 6px 20px rgba(255, 140, 50, 0.5);
+            font-size: 11px;
+            font-weight: 700;
             font-family: 'Space Grotesk', sans-serif;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
-        button:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 40px rgba(255, 140, 50, 0.7);
-        }
-
-        button:active {
-            transform: translateY(-2px);
-        }
-
         .color-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
+            gap: 4px;
         }
 
         .color-option {
             aspect-ratio: 1;
-            border-radius: 8px;
+            border-radius: 6px;
             border: 2px solid transparent;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .color-option::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: inherit;
-            opacity: 0.9;
-            transition: opacity 0.3s ease;
-        }
-
-        .color-option:hover::before {
-            opacity: 1;
-        }
-
-        .color-option:hover {
-            transform: scale(1.15) rotate(5deg);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
         }
 
         .color-option.active {
             border-color: white;
-            box-shadow: 
-                0 0 0 3px rgba(255, 140, 50, 0.4),
-                0 6px 20px rgba(0, 0, 0, 0.4);
-            transform: scale(1.05);
         }
 
         .color-option.active::after {
@@ -450,8 +345,8 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 14px;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+            font-size: 12px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
         }
 
         #info {
@@ -817,28 +712,28 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Particle background - OPTIMIZED
+        // Particle background - SUPER OPTIMIZED
         const particleCanvas = document.getElementById('particleCanvas');
-        const ctx = particleCanvas.getContext('2d');
+        const ctx = particleCanvas.getContext('2d', { alpha: true });
         particleCanvas.width = window.innerWidth;
         particleCanvas.height = window.innerHeight;
 
         const particles = [];
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 15; i++) {
             particles.push({
                 x: Math.random() * particleCanvas.width,
                 y: Math.random() * particleCanvas.height,
-                size: Math.random() * 1.5 + 0.5,
-                speedX: (Math.random() - 0.5) * 0.3,
-                speedY: (Math.random() - 0.5) * 0.3,
-                opacity: Math.random() * 0.4 + 0.1
+                size: Math.random() * 1 + 0.5,
+                speedX: (Math.random() - 0.5) * 0.2,
+                speedY: (Math.random() - 0.5) * 0.2,
+                opacity: Math.random() * 0.3 + 0.1
             });
         }
 
         let frameCount = 0;
         function animateParticles() {
             frameCount++;
-            if (frameCount % 2 !== 0) {
+            if (frameCount % 3 !== 0) {
                 requestAnimationFrame(animateParticles);
                 return;
             }
@@ -1101,26 +996,15 @@
         }
 
         function createAtom(color, size) {
-            const geometry = new THREE.SphereGeometry(size, 32, 32);
+            const geometry = new THREE.SphereGeometry(size, 16, 16);
             const material = new THREE.MeshPhongMaterial({
                 color: color,
-                shininess: 200,
-                specular: 0xffffff,
+                shininess: 100,
+                specular: 0xaaaaaa,
                 emissive: color,
-                emissiveIntensity: 0.25
+                emissiveIntensity: 0.15
             });
             const sphere = new THREE.Mesh(geometry, material);
-            
-            // Simplified glow
-            const glowGeometry = new THREE.SphereGeometry(size * 1.2, 16, 16);
-            const glowMaterial = new THREE.MeshBasicMaterial({
-                color: color,
-                transparent: true,
-                opacity: 0.15,
-                side: THREE.BackSide
-            });
-            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-            sphere.add(glow);
             
             return sphere;
         }
@@ -1239,16 +1123,16 @@
         }
 
         function createEnergyParticles() {
-            for (let i = 0; i < 15; i++) {
-                const geometry = new THREE.SphereGeometry(0.08, 8, 8);
+            for (let i = 0; i < 8; i++) {
+                const geometry = new THREE.SphereGeometry(0.08, 6, 6);
                 const material = new THREE.MeshBasicMaterial({
                     color: 0xffb450,
                     transparent: true,
-                    opacity: 0.7
+                    opacity: 0.6
                 });
                 const particle = new THREE.Mesh(geometry, material);
                 
-                const angle = (i / 15) * Math.PI * 2;
+                const angle = (i / 8) * Math.PI * 2;
                 const radius = 6 + Math.random() * 2;
                 particle.position.set(
                     Math.cos(angle) * radius,
@@ -1296,48 +1180,62 @@
         }
 
         function setupControls() {
-            document.getElementById('autoRotateToggle').addEventListener('click', function() {
+            // Add collapse toggle
+            document.querySelector('.panel-header').addEventListener('click', function(e) {
+                if (!e.target.closest('.toggle-switch')) {
+                    document.getElementById('controls').classList.toggle('collapsed');
+                }
+            });
+
+            document.getElementById('autoRotateToggle').addEventListener('click', function(e) {
+                e.stopPropagation();
                 const switchEl = this.querySelector('.toggle-switch');
                 switchEl.classList.toggle('active');
                 autoRotate = !autoRotate;
             });
 
-            document.getElementById('labelsToggle').addEventListener('click', function() {
+            document.getElementById('labelsToggle').addEventListener('click', function(e) {
+                e.stopPropagation();
                 const switchEl = this.querySelector('.toggle-switch');
                 switchEl.classList.toggle('active');
                 showLabels = !showLabels;
                 updateMolecule();
             });
 
-            document.getElementById('bondsToggle').addEventListener('click', function() {
+            document.getElementById('bondsToggle').addEventListener('click', function(e) {
+                e.stopPropagation();
                 const switchEl = this.querySelector('.toggle-switch');
                 switchEl.classList.toggle('active');
                 showBonds = !showBonds;
                 updateMolecule();
             });
 
-            document.getElementById('hydrogenToggle').addEventListener('click', function() {
+            document.getElementById('hydrogenToggle').addEventListener('click', function(e) {
+                e.stopPropagation();
                 const switchEl = this.querySelector('.toggle-switch');
                 switchEl.classList.toggle('active');
                 showHydrogen = !showHydrogen;
                 updateMolecule();
             });
 
-            document.getElementById('hydrogenBondsToggle').addEventListener('click', function() {
+            document.getElementById('hydrogenBondsToggle').addEventListener('click', function(e) {
+                e.stopPropagation();
                 const switchEl = this.querySelector('.toggle-switch');
                 switchEl.classList.toggle('active');
                 showHydrogenBonds = !showHydrogenBonds;
                 updateMolecule();
             });
 
-            document.getElementById('ringHighlightToggle').addEventListener('click', function() {
+            document.getElementById('ringHighlightToggle').addEventListener('click', function(e) {
+                e.stopPropagation();
                 const switchEl = this.querySelector('.toggle-switch');
                 switchEl.classList.toggle('active');
                 showRingHighlight = !showRingHighlight;
                 updateMolecule();
             });
 
-            document.getElementById('energyFlowToggle').addEventListener('click', function() {
+            document.getElementById('energyFlowToggle').addEventListener('click', function(e) {
+                e.stopPropagation();
                 const switchEl = this.querySelector('.toggle-switch');
                 switchEl.classList.toggle('active');
                 showEnergyFlow = !showEnergyFlow;
@@ -1444,6 +1342,7 @@
 
         function animate() {
             requestAnimationFrame(animate);
+            frameCount++;
 
             if (autoRotate) {
                 molecule.rotation.y += 0.006 * rotationSpeed;
@@ -1453,41 +1352,28 @@
                 molecule.rotation.x = manualRotation.x;
             }
 
-            // Animate energy particles
-            if (energyParticles.length > 0) {
+            // Animate energy particles - OPTIMIZED
+            if (energyParticles.length > 0 && frameCount % 2 === 0) {
                 const time = Date.now() * 0.001;
-                energyParticles.forEach((particle, i) => {
+                energyParticles.forEach((particle) => {
                     particle.userData.angle += particle.userData.speed;
                     particle.position.x = Math.cos(particle.userData.angle) * particle.userData.radius;
                     particle.position.z = Math.sin(particle.userData.angle) * particle.userData.radius;
-                    particle.position.y += Math.sin(time * 2 + i) * 0.02;
-                    
-                    // Pulsing effect
-                    const scale = 1 + Math.sin(time * 3 + i) * 0.3;
-                    particle.scale.set(scale, scale, scale);
                 });
             }
 
-            // Animate ring highlight
-            if (ringHighlight) {
+            // Simplified animations
+            if (ringHighlight && frameCount % 3 === 0) {
                 const time = Date.now() * 0.001;
-                ringHighlight.material.opacity = 0.5 + Math.sin(time * 2) * 0.3;
+                ringHighlight.material.opacity = 0.5 + Math.sin(time * 2) * 0.2;
             }
 
-            // Animate hydrogen bonds
-            if (hydrogenBonds.length > 0) {
+            if (hydrogenBonds.length > 0 && frameCount % 3 === 0) {
                 const time = Date.now() * 0.001;
                 hydrogenBonds.forEach((bond, i) => {
-                    bond.material.opacity = 0.4 + Math.sin(time * 2 + i * 0.5) * 0.2;
+                    bond.material.opacity = 0.4 + Math.sin(time * 2 + i * 0.5) * 0.15;
                 });
             }
-
-            // Subtle atom pulsing
-            atoms.forEach((atom, i) => {
-                const time = Date.now() * 0.001;
-                const pulse = 1 + Math.sin(time * 1.5 + i * 0.3) * 0.05;
-                atom.scale.set(pulse, pulse, pulse);
-            });
 
             renderer.render(scene, camera);
         }
