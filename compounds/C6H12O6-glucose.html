@@ -57,18 +57,19 @@
 
         #controls {
             position: absolute;
-            top: 30px;
-            right: 30px;
+            top: 20px;
+            right: 20px;
             background: rgba(20, 10, 5, 0.95);
             backdrop-filter: blur(40px) saturate(180%);
             padding: 0;
-            border-radius: 28px;
+            border-radius: 20px;
             box-shadow: 
-                0 30px 90px rgba(255, 100, 20, 0.3),
+                0 20px 60px rgba(255, 100, 20, 0.3),
                 0 0 0 1px rgba(255, 140, 50, 0.2),
                 inset 0 1px 0 rgba(255, 255, 255, 0.05);
             z-index: 100;
-            width: 320px;
+            width: 240px;
+            max-height: calc(100vh - 40px);
             border: 2px solid rgba(255, 140, 50, 0.15);
             overflow: hidden;
             animation: slideIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -80,7 +81,7 @@
         }
 
         .panel-header {
-            padding: 28px 30px;
+            padding: 16px 20px;
             background: linear-gradient(135deg, rgba(255, 140, 50, 0.2) 0%, rgba(255, 80, 20, 0.2) 100%);
             border-bottom: 2px solid rgba(255, 140, 50, 0.2);
             position: relative;
@@ -104,44 +105,44 @@
         }
 
         h1 {
-            font-size: 28px;
+            font-size: 20px;
             font-weight: 800;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 50%, #ffb450 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 6px;
-            letter-spacing: -1px;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
             filter: drop-shadow(0 2px 8px rgba(255, 140, 50, 0.3));
             position: relative;
         }
 
         .subtitle {
-            font-size: 13px;
+            font-size: 10px;
             color: rgba(255, 180, 100, 0.8);
             font-weight: 600;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             text-transform: uppercase;
         }
 
         .energy-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 10px;
-            padding: 6px 14px;
+            gap: 4px;
+            margin-top: 6px;
+            padding: 4px 10px;
             background: linear-gradient(135deg, rgba(255, 140, 50, 0.25), rgba(255, 80, 20, 0.25));
-            border-radius: 20px;
+            border-radius: 16px;
             border: 1px solid rgba(255, 140, 50, 0.4);
-            font-size: 11px;
+            font-size: 9px;
             font-weight: 700;
             color: #ffb450;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
         }
 
         .energy-badge::before {
             content: '⚡';
-            font-size: 14px;
+            font-size: 11px;
             animation: pulse 2s ease-in-out infinite;
         }
 
@@ -151,9 +152,10 @@
         }
 
         .panel-content {
-            padding: 24px 30px 30px;
-            max-height: calc(100vh - 240px);
+            padding: 16px 20px 20px;
+            max-height: calc(100vh - 200px);
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .panel-content::-webkit-scrollbar {
@@ -172,7 +174,7 @@
         }
 
         .control-group {
-            margin-bottom: 22px;
+            margin-bottom: 14px;
             animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
         }
 
@@ -202,23 +204,23 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: rgba(255, 220, 180, 0.95);
             font-weight: 700;
-            font-size: 13px;
-            letter-spacing: 0.5px;
+            font-size: 11px;
+            letter-spacing: 0.3px;
         }
 
         .value-display {
             color: #ff8c32;
             font-weight: 800;
-            font-size: 12px;
+            font-size: 10px;
             background: rgba(255, 140, 50, 0.2);
-            padding: 5px 12px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: 8px;
             border: 1px solid rgba(255, 140, 50, 0.4);
             font-family: 'JetBrains Mono', monospace;
-            box-shadow: 0 4px 12px rgba(255, 140, 50, 0.2);
+            box-shadow: 0 2px 8px rgba(255, 140, 50, 0.2);
         }
 
         input[type="range"] {
@@ -235,43 +237,43 @@
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 22px;
-            height: 22px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 100%);
             cursor: pointer;
             box-shadow: 
-                0 6px 20px rgba(255, 140, 50, 0.6),
-                0 0 0 5px rgba(255, 140, 50, 0.2),
+                0 4px 12px rgba(255, 140, 50, 0.6),
+                0 0 0 3px rgba(255, 140, 50, 0.2),
                 inset 0 -2px 4px rgba(0, 0, 0, 0.3);
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.3);
+            transform: scale(1.2);
             box-shadow: 
-                0 8px 30px rgba(255, 140, 50, 0.8),
-                0 0 0 8px rgba(255, 140, 50, 0.25),
+                0 6px 16px rgba(255, 140, 50, 0.8),
+                0 0 0 5px rgba(255, 140, 50, 0.25),
                 inset 0 -2px 4px rgba(0, 0, 0, 0.3);
         }
 
         input[type="range"]::-moz-range-thumb {
-            width: 22px;
-            height: 22px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 100%);
             cursor: pointer;
             border: none;
-            box-shadow: 0 6px 20px rgba(255, 140, 50, 0.6);
+            box-shadow: 0 4px 12px rgba(255, 140, 50, 0.6);
         }
 
         .toggle-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
+            padding: 10px 12px;
             background: rgba(255, 140, 50, 0.05);
-            border-radius: 14px;
+            border-radius: 10px;
             border: 1px solid rgba(255, 140, 50, 0.15);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             cursor: pointer;
@@ -300,7 +302,7 @@
         }
 
         .toggle-label {
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 700;
             color: rgba(255, 220, 180, 0.95);
             position: relative;
@@ -308,10 +310,10 @@
 
         .toggle-switch {
             position: relative;
-            width: 50px;
-            height: 28px;
+            width: 40px;
+            height: 22px;
             background: rgba(255, 255, 255, 0.08);
-            border-radius: 14px;
+            border-radius: 11px;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             border: 2px solid rgba(255, 140, 50, 0.2);
         }
@@ -328,26 +330,26 @@
             position: absolute;
             top: 2px;
             left: 2px;
-            width: 20px;
-            height: 20px;
+            width: 14px;
+            height: 14px;
             background: linear-gradient(135deg, #fff 0%, #ffe0c0 100%);
             border-radius: 50%;
             transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
         }
 
         .toggle-switch.active .toggle-slider {
-            transform: translateX(22px);
+            transform: translateX(18px);
         }
 
         select {
             width: 100%;
-            padding: 14px 16px;
+            padding: 10px 12px;
             border: 2px solid rgba(255, 140, 50, 0.15);
-            border-radius: 14px;
+            border-radius: 10px;
             background: rgba(255, 140, 50, 0.05);
             color: rgba(255, 220, 180, 0.95);
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 700;
             cursor: pointer;
             outline: none;
@@ -373,16 +375,16 @@
 
         button {
             width: 100%;
-            padding: 14px;
+            padding: 10px;
             background: linear-gradient(135deg, #ff8c32 0%, #ff6420 100%);
             color: white;
             border: none;
-            border-radius: 14px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 800;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 8px 25px rgba(255, 140, 50, 0.5);
+            box-shadow: 0 6px 20px rgba(255, 140, 50, 0.5);
             font-family: 'Space Grotesk', sans-serif;
             letter-spacing: 0.5px;
             text-transform: uppercase;
@@ -400,13 +402,13 @@
         .color-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 10px;
+            gap: 6px;
         }
 
         .color-option {
             aspect-ratio: 1;
-            border-radius: 12px;
-            border: 3px solid transparent;
+            border-radius: 8px;
+            border: 2px solid transparent;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
@@ -427,16 +429,16 @@
         }
 
         .color-option:hover {
-            transform: scale(1.2) rotate(8deg);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
         }
 
         .color-option.active {
             border-color: white;
             box-shadow: 
-                0 0 0 4px rgba(255, 140, 50, 0.4),
-                0 8px 25px rgba(0, 0, 0, 0.4);
-            transform: scale(1.08);
+                0 0 0 3px rgba(255, 140, 50, 0.4),
+                0 6px 20px rgba(0, 0, 0, 0.4);
+            transform: scale(1.05);
         }
 
         .color-option.active::after {
@@ -448,8 +450,8 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            font-size: 18px;
-            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.8);
+            font-size: 14px;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
         }
 
         #info {
@@ -587,21 +589,23 @@
 
         @media (max-width: 768px) {
             #controls {
-                width: 280px;
-                right: 15px;
-                top: 15px;
+                width: 220px;
+                right: 10px;
+                top: 10px;
             }
             
             #info {
-                max-width: 280px;
-                left: 15px;
-                bottom: 15px;
+                max-width: calc(100vw - 240px);
+                left: 10px;
+                bottom: 10px;
+                font-size: 11px;
             }
             
             #measurements {
-                left: 15px;
-                top: auto;
-                bottom: calc(280px + 30px);
+                left: 10px;
+                top: 10px;
+                font-size: 11px;
+                display: none;
             }
         }
     </style>
@@ -813,25 +817,32 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Particle background
+        // Particle background - OPTIMIZED
         const particleCanvas = document.getElementById('particleCanvas');
         const ctx = particleCanvas.getContext('2d');
         particleCanvas.width = window.innerWidth;
         particleCanvas.height = window.innerHeight;
 
         const particles = [];
-        for (let i = 0; i < 80; i++) {
+        for (let i = 0; i < 30; i++) {
             particles.push({
                 x: Math.random() * particleCanvas.width,
                 y: Math.random() * particleCanvas.height,
-                size: Math.random() * 2 + 0.5,
-                speedX: (Math.random() - 0.5) * 0.5,
-                speedY: (Math.random() - 0.5) * 0.5,
-                opacity: Math.random() * 0.5 + 0.2
+                size: Math.random() * 1.5 + 0.5,
+                speedX: (Math.random() - 0.5) * 0.3,
+                speedY: (Math.random() - 0.5) * 0.3,
+                opacity: Math.random() * 0.4 + 0.1
             });
         }
 
+        let frameCount = 0;
         function animateParticles() {
+            frameCount++;
+            if (frameCount % 2 !== 0) {
+                requestAnimationFrame(animateParticles);
+                return;
+            }
+            
             ctx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
             
             particles.forEach(p => {
@@ -882,9 +893,9 @@
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
             camera.position.set(0, 0, 18);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
             const container = document.getElementById('container');
             container.appendChild(renderer.domElement);
 
@@ -1090,7 +1101,7 @@
         }
 
         function createAtom(color, size) {
-            const geometry = new THREE.SphereGeometry(size, 64, 64);
+            const geometry = new THREE.SphereGeometry(size, 32, 32);
             const material = new THREE.MeshPhongMaterial({
                 color: color,
                 shininess: 200,
@@ -1100,12 +1111,12 @@
             });
             const sphere = new THREE.Mesh(geometry, material);
             
-            // Enhanced glow
-            const glowGeometry = new THREE.SphereGeometry(size * 1.3, 32, 32);
+            // Simplified glow
+            const glowGeometry = new THREE.SphereGeometry(size * 1.2, 16, 16);
             const glowMaterial = new THREE.MeshBasicMaterial({
                 color: color,
                 transparent: true,
-                opacity: 0.2,
+                opacity: 0.15,
                 side: THREE.BackSide
             });
             const glow = new THREE.Mesh(glowGeometry, glowMaterial);
@@ -1228,16 +1239,16 @@
         }
 
         function createEnergyParticles() {
-            for (let i = 0; i < 30; i++) {
-                const geometry = new THREE.SphereGeometry(0.08, 16, 16);
+            for (let i = 0; i < 15; i++) {
+                const geometry = new THREE.SphereGeometry(0.08, 8, 8);
                 const material = new THREE.MeshBasicMaterial({
                     color: 0xffb450,
                     transparent: true,
-                    opacity: 0.8
+                    opacity: 0.7
                 });
                 const particle = new THREE.Mesh(geometry, material);
                 
-                const angle = (i / 30) * Math.PI * 2;
+                const angle = (i / 15) * Math.PI * 2;
                 const radius = 6 + Math.random() * 2;
                 particle.position.set(
                     Math.cos(angle) * radius,
